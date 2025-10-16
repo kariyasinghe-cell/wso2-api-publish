@@ -39,6 +39,6 @@ jobs:
         run: |
           curl -k -X POST "${WSO2_ENV_URL}/api/am/publisher/v3/apis/import-openapi" \
             -H "Authorization: Bearer $ACCESS_TOKEN" \
-            -F "file=@./swagger.yaml" \
+            -F "file=@./bank-demo/sample-api/artifact/swagger.yaml" \
             -F "preserveProvider=false" \
             -F "update=true"
