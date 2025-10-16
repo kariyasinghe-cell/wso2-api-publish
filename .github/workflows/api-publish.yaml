@@ -1,1 +1,44 @@
+name: Deploy API to WSO2 via REST API
 
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Get access token from WSO2 Key Manager (OAuth2 Password Grant)
+      - name: Get WSO2 Access Token
+        id: token
+        env:
+          WSO2_USERNAME: ${{ secrets.WSO2_USERNAME }}
+          WSO2_PASSWORD: ${{ secrets.WSO2_PASSWORD }}
+          WSO2_ENV_URL: ${{ secrets.WSO2_ENV_URL }}
+        run: |
+          # Request a token
+          RESPONSE=$(curl -k -s -X POST "${WSO2_ENV_URL}/oauth2/token" \
+            -u "admin:admin" \
+            -d "grant_type=password&username=$WSO2_USERNAME&password=$WSO2_PASSWORD&scope=apim:api_publish apim:api_view apim:api_create") 
+          echo "$RESPONSE"
+          
+          # Extract access token
+          ACCESS_TOKEN=$(echo $RESPONSE | jq -r '.access_token')
+          echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
+
+      # Step 3: Import API (create or update) via Publisher REST API
+      - name: Import and Deploy API
+        env:
+          WSO2_ENV_URL: ${{ secrets.WSO2_ENV_URL }}
+          ACCESS_TOKEN: ${{ env.ACCESS_TOKEN }}
+        run: |
+          curl -k -X POST "${WSO2_ENV_URL}/api/am/publisher/v3/apis/import-openapi" \
+            -H "Authorization: Bearer $ACCESS_TOKEN" \
+            -F "file=@./swagger.yaml" \
+            -F "preserveProvider=false" \
+            -F "update=true"
