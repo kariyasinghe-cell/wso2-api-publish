@@ -6,7 +6,7 @@ on:
 
 jobs:
   # ---------------------------
-  # Job 2: List APIs (runs after deploy)
+  # List APIs
   # ---------------------------
   list-apis:
     runs-on: ubuntu-latest
