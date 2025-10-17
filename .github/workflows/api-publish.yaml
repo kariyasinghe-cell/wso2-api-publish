@@ -6,52 +6,18 @@ on:
 
 jobs:
   # ---------------------------
-  # Job 1: Deploy API
-  # ---------------------------
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install WSO2 APICTL
-        uses: yasassri/setup-wso2-apictl@v1.2
-        with:
-          version: 'v3.2.5'
-
-      - name: Verify apictl version
-        run: apictl version
-
-  # ---------------------------
   # Job 2: List APIs (runs after deploy)
   # ---------------------------
   list-apis:
     runs-on: ubuntu-latest
-    needs: deploy   # ensures this runs AFTER deploy
 
     steps:
-      - name: Install WSO2 APICTL
-        uses: yasassri/setup-wso2-apictl@v1.2
-        with:
-          version: 'v3.2.5'
-
-      - name: Configure WSO2 Environment
-        env:
-          WSO2_ENV_URL: ${{ secrets.WSO2_ENV_URL }}
+      - name: Install apictl
         run: |
-          apictl add-env -n dev \
-            --publisher ${WSO2_ENV_URL}/api/am/publisher/v3 \
-            --token ${WSO2_ENV_URL}/oauth2/token
+          wget https://github.com/wso2/product-apim-tooling/releases/download/v4.5.0/apictl-4.5.0-linux-amd64.tar.gz
+          tar -xzf apictl-4.5.0-linux-amd64.tar.gz
+          chmod +x apictl/apictl
+          sudo mv apictl/apictl /usr/local/bin/
 
-      - name: Login to WSO2 Environment
-        env:
-          WSO2_USERNAME: ${{ secrets.WSO2_USERNAME }}
-          WSO2_PASSWORD: ${{ secrets.WSO2_PASSWORD }}
-        run: |
-          apictl login dev -u $WSO2_USERNAME -p $WSO2_PASSWORD --insecure
-
-      - name: List APIs in WSO2 Publisher
-        run: |
-          echo "Listing available APIs in 'dev' environment..."
-          apictl list apis -e dev
+      - name: Verify apictl version
+        run: apictl version
