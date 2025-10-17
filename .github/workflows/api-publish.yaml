@@ -27,8 +27,12 @@ jobs:
           apictl add env dev --apim https://${{ secrets.WSO2_DEV_APIM }}
 
       - name: Login to Dev
+        env:
+          APIM_USERNAME: ${{ secrets.APIM_USERNAME }}
+          APIM_PASSWORD: ${{ secrets.APIM_PASSWORD }}
         run: |
-          apictl login dev -u ${{ secrets.APIM_USERNAME }} -p ${{ secrets.APIM_PASSWORD }} -k
+          echo "Logging into dev environment..."
+          apictl login dev -u $APIM_USERNAME -p $APIM_PASSWORD -k --non-interactive
 
       - name: List APIs in Dev Environment
         run: |
