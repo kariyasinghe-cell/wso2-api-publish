@@ -29,3 +29,8 @@ jobs:
       - name: Login to Dev
         run: |
           apictl login dev -u ${{ secrets.APIM_USERNAME }} -p ${{ secrets.APIM_PASSWORD }} -k
+
+      - name: List APIs in Dev Environment
+        run: |
+          echo "Listing APIs in 'dev' environment with extra info..."
+          apictl list apis -e dev -v
