@@ -31,8 +31,7 @@ jobs:
           APIM_USERNAME: ${{ secrets.APIM_USERNAME }}
           APIM_PASSWORD: ${{ secrets.APIM_PASSWORD }}
         run: |
-          echo "Logging into dev environment..."
-          apictl login dev -u $APIM_USERNAME -p $APIM_PASSWORD -k
+          echo $APIM_PASSWORD | apictl login dev -u $APIM_USERNAME --password-stdin -k
 
       - name: List APIs in Dev Environment
         run: |
