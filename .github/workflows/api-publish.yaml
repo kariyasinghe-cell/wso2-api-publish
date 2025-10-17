@@ -13,32 +13,39 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Get access token from WSO2 Key Manager (OAuth2 Password Grant)
-      - name: Get WSO2 Access Token
-        id: token
-        env:
-          WSO2_USERNAME: ${{ secrets.WSO2_USERNAME }}
-          WSO2_PASSWORD: ${{ secrets.WSO2_PASSWORD }}
-          WSO2_ENV_URL: ${{ secrets.WSO2_ENV_URL }}
-        run: |
-          # Request a token
-          RESPONSE=$(curl -k -s -X POST "${WSO2_ENV_URL}/oauth2/token" \
-            -u "admin:admin" \
-            -d "grant_type=password&username=$WSO2_USERNAME&password=$WSO2_PASSWORD&scope=apim:api_publish apim:api_view apim:api_create") 
-          echo "$RESPONSE"
-          
-          # Extract access token
-          ACCESS_TOKEN=$(echo $RESPONSE | jq -r '.access_token')
-          echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
+      # Step 2: Install WSO2 apictl
+      - name: Install WSO2 APICTL
+        uses: yasassri/setup-wso2-apictl@v1.2
+        with:
+          version: 'v3.2.5'
 
-      # Step 3: Import API (create or update) via Publisher REST API
-      - name: Import and Deploy API
-        env:
-          WSO2_ENV_URL: ${{ secrets.WSO2_ENV_URL }}
-          ACCESS_TOKEN: ${{ env.ACCESS_TOKEN }}
-        run: |
-          curl -k -X POST "${WSO2_ENV_URL}/api/am/publisher/v3/apis/import-openapi" \
-            -H "Authorization: Bearer $ACCESS_TOKEN" \
-            -F "file=@./bank-demo/sample-api/artifact/swagger.yaml" \
-            -F "preserveProvider=false" \
-            -F "update=true"
+      - name: Verify apictl version
+        run: apictl version
+
+      # Step 3: Get access token from WSO2 Key Manager (OAuth2 Password Grant)
+      # - name: Get WSO2 Access Token
+      #   id: token
+      #   env:
+      #     WSO2_USERNAME: ${{ secrets.WSO2_USERNAME }}
+      #     WSO2_PASSWORD: ${{ secrets.WSO2_PASSWORD }}
+      #     WSO2_ENV_URL: ${{ secrets.WSO2_ENV_URL }}
+      #   run: |
+      #     RESPONSE=$(curl -k -s -X POST "${WSO2_ENV_URL}/oauth2/token" \
+      #       -u "admin:admin" \
+      #       -d "grant_type=password&username=$WSO2_USERNAME&password=$WSO2_PASSWORD&scope=apim:api_publish apim:api_view apim:api_create")
+      #     echo "$RESPONSE"
+
+      #     ACCESS_TOKEN=$(echo $RESPONSE | jq -r '.access_token')
+      #     echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
+
+      # Step 4: Import and Deploy API
+      # - name: Import and Deploy API
+      #   env:
+      #     WSO2_ENV_URL: ${{ secrets.WSO2_ENV_URL }}
+      #     ACCESS_TOKEN: ${{ env.ACCESS_TOKEN }}
+      #   run: |
+      #     curl -k -X POST "${WSO2_ENV_URL}/api/am/publisher/v3/apis/import-openapi" \
+      #       -H "Authorization: Bearer $ACCESS_TOKEN" \
+      #       -F "file=@./bank-demo/sample-api/artifact/swagger.yaml" \
+      #       -F "preserveProvider=false" \
+      #       -F "update=true"
