@@ -21,3 +21,11 @@ jobs:
 
       - name: Verify apictl version
         run: apictl version
+
+      - name: Add Dev Environment
+        run: |
+          apictl add env dev --apim https://${{ secrets.WSO2_DEV_APIM }}
+
+      - name: Login to Dev
+        run: |
+          apictl login dev -u ${{ secrets.APIM_USERNAME }} -p ${{ secrets.APIM_PASSWORD }} -k
