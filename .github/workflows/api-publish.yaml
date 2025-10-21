@@ -22,12 +22,12 @@ jobs:
       - name: Add Dev Environment
         shell: bash
         run: |
-          DEV_APIM=${{ secrets.WSO2_DEV_APIM }}
+          DEV_APIM=${{ secrets.WSO2_ENV_URL }}
           apictl add env dev --apim https://$DEV_APIM
 
       - name: Login to Dev
         run: |
-          apictl login dev -u "${{ secrets.APIM_USERNAME }}" -p "${{ secrets.APIM_PASSWORD }}" -k
+          apictl login dev -u "${{ secrets.WSO2_USERNAME }}" -p "${{ secrets.WSO2_PASSWORD }}" -k
 
       - name: Import API to Dev
         run: |
