@@ -29,8 +29,6 @@ jobs:
 
       - name: Login to Dev
         run: |
-          pwd
-          ls
           apictl login dev -u "${{ secrets.WSO2_USERNAME }}" -p "${{ secrets.WSO2_PASSWORD }}" -k
 
       - name: Import API to Dev
