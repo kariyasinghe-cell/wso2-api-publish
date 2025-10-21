@@ -21,7 +21,8 @@ jobs:
 
       - name: Add Dev Environment
         run: |
-          apictl add env dev --apim https://${{ secrets.WSO2_DEV_APIM }}
+          DEV_APIM=${{ secrets.WSO2_DEV_APIM }}
+          apictl add env dev --apim https://$DEV_APIM
 
       - name: Login to Dev
         run: |
