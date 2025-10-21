@@ -20,6 +20,7 @@ jobs:
         run: apictl version
 
       - name: Add Dev Environment
+        shell: bash
         run: |
           DEV_APIM=${{ secrets.WSO2_DEV_APIM }}
           apictl add env dev --apim https://$DEV_APIM
