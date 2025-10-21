@@ -25,7 +25,7 @@ jobs:
 
       - name: Login to Dev
         run: |
-          apictl login dev -u ${{ secrets.APIM_USERNAME }} -p ${{ secrets.APIM_PASSWORD }} -k
+          apictl login dev -u "${{ secrets.APIM_USERNAME }}" -p "${{ secrets.APIM_PASSWORD }}" -k
 
       - name: Import API to Dev
         run: |
