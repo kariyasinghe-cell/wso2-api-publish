@@ -5,10 +5,12 @@ on:
     branches: [ main ]
 
 jobs:
-  list-apis:
+  import-apis:
     runs-on: ubuntu-latest
-
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Install apictl
         run: |
           wget https://github.com/wso2/product-apim-tooling/releases/download/v4.5.0/apictl-4.5.0-linux-amd64.tar.gz
@@ -27,6 +29,8 @@ jobs:
 
       - name: Login to Dev
         run: |
+          pwd
+          ls
           apictl login dev -u "${{ secrets.WSO2_USERNAME }}" -p "${{ secrets.WSO2_PASSWORD }}" -k
 
       - name: Import API to Dev
